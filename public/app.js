@@ -1,96 +1,83 @@
-function showSection(id) {
-  document.querySelectorAll(".section").forEach(sec => {
-    sec.classList.add("hidden");
-  });
+// Floating blobs
+const blob1 = document.createElement("div");
+blob1.className = "blob one";
+document.body.appendChild(blob1);
 
-  document.querySelectorAll(".nav-buttons button")
-    .forEach(btn => btn.classList.remove("active"));
+const blob2 = document.createElement("div");
+blob2.className = "blob two";
+document.body.appendChild(blob2);
 
-  const activeSection = document.getElementById(id);
-  activeSection.classList.remove("hidden");
-  activeSection.style.opacity = 0;
+// Dark/Light Toggle
+const toggle = document.createElement("button");
+toggle.textContent = "🌗";
+toggle.style.position = "fixed";
+toggle.style.top = "20px";
+toggle.style.right = "20px";
+toggle.onclick = () => document.body.classList.toggle("light");
+document.body.appendChild(toggle);
 
-  setTimeout(() => activeSection.style.opacity = 1, 10);
+// Stats Dashboard
+const stats = document.createElement("div");
+stats.className = "stats-grid reveal";
+stats.innerHTML = `
+<div class="stat-card"><div>Total Applications</div><div class="stat-number" id="totalApps">0</div></div>
+<div class="stat-card"><div>Success Rate</div><div class="stat-number">76%</div></div>
+<div class="stat-card"><div>Active Portals</div><div class="stat-number">4</div></div>
+`;
+document.querySelector(".main-content").prepend(stats);
 
-  const activeButton = [...document.querySelectorAll(".nav-buttons button")]
-    .find(btn => btn.textContent.toLowerCase() === id);
-
-  if (activeButton) activeButton.classList.add("active");
+// Real-time Counter
+let count = 0;
+function incrementCounter() {
+  count++;
+  document.getElementById("totalApps").textContent = count;
 }
 
+// Scroll Reveal
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add("active");
+    }
+  });
+});
+document.querySelectorAll(".reveal").forEach(el => observer.observe(el));
+
+// AI Assistant Bubble
+const ai = document.createElement("div");
+ai.className = "ai-bubble";
+ai.innerHTML = "🤖";
+ai.onclick = () => showToast("AI Assistant coming soon 🚀");
+document.body.appendChild(ai);
+
+// Toast
 function showToast(message) {
   const toast = document.createElement("div");
   toast.className = "toast";
   toast.textContent = message;
   document.body.appendChild(toast);
-
   setTimeout(() => toast.remove(), 3000);
 }
 
+// Section Switch
+function showSection(id) {
+  document.querySelectorAll(".section").forEach(sec => sec.classList.add("hidden"));
+  document.getElementById(id).classList.remove("hidden");
+}
+
+// Backend Status
 async function checkStatus() {
   try {
     const res = await fetch("/health");
-    const pill = document.getElementById("status");
-
-    if (res.ok) {
-      pill.textContent = "Backend Online";
-      pill.classList.remove("offline");
-    } else {
-      throw new Error();
-    }
+    if (!res.ok) throw new Error();
   } catch {
-    const pill = document.getElementById("status");
-    pill.textContent = "Backend Offline";
-    pill.classList.add("offline");
+    document.querySelector(".dot").style.background = "red";
   }
 }
 
-async function saveCredentials() {
-  const portal = document.getElementById("portal").value;
-  const username = document.getElementById("username").value;
-  const password = document.getElementById("password").value;
-
-  await fetch("/api/save-credentials", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ portal, username, password })
-  });
-
-  showToast("Credentials saved successfully");
-}
-
-async function uploadResume() {
-  const file = document.getElementById("resumeFile").files[0];
-  const formData = new FormData();
-  formData.append("resume", file);
-
-  await fetch("/api/upload-resume", {
-    method: "POST",
-    body: formData
-  });
-
-  showToast("Resume uploaded successfully");
-}
-
 async function runAutomation() {
-  await fetch("/api/run", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ portal: "linkedin", resumePath: "" })
-  });
-
-  startLogs();
-  showToast("Automation started");
-}
-
-function startLogs() {
-  const eventSource = new EventSource("/api/logs");
-  eventSource.onmessage = function (event) {
-    const logBox = document.getElementById("logBox");
-    logBox.innerHTML += event.data + "<br>";
-    logBox.scrollTop = logBox.scrollHeight;
-  };
+  incrementCounter();
+  showToast("Automation Started 🚀");
 }
 
 checkStatus();
-showSection("credentials");
