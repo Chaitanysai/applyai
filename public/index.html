@@ -1,9 +1,54 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>ApplyAI</title>
+  <title>ApplyAI Dashboard</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <h1>ApplyAI is running 🚀</h1>
+
+<div class="container">
+  <div class="sidebar">
+    <h2>ApplyAI</h2>
+    <button onclick="showSection('credentials')">Credentials</button>
+    <button onclick="showSection('resume')">Resume</button>
+    <button onclick="showSection('run')">Run</button>
+    <button onclick="showSection('logs')">Logs</button>
+  </div>
+
+  <div class="main">
+    <div id="status">Checking backend...</div>
+
+    <div id="credentials" class="section">
+      <h3>Save Credentials</h3>
+      <select id="portal">
+        <option value="linkedin">LinkedIn</option>
+        <option value="naukri">Naukri</option>
+        <option value="indeed">Indeed</option>
+        <option value="instahyre">Instahyre</option>
+      </select>
+      <input id="username" placeholder="Username">
+      <input id="password" type="password" placeholder="Password">
+      <button onclick="saveCredentials()">Save</button>
+    </div>
+
+    <div id="resume" class="section hidden">
+      <h3>Upload Resume</h3>
+      <input type="file" id="resumeFile">
+      <button onclick="uploadResume()">Upload</button>
+    </div>
+
+    <div id="run" class="section hidden">
+      <h3>Run Automation</h3>
+      <button onclick="runAutomation()">Start</button>
+    </div>
+
+    <div id="logs" class="section hidden">
+      <h3>Live Logs</h3>
+      <div id="logBox"></div>
+    </div>
+  </div>
+</div>
+
+<script src="app.js"></script>
 </body>
 </html>
