@@ -80,4 +80,19 @@ async function runAutomation() {
   showToast("Automation Started 🚀");
 }
 
+async function askAI() {
+  const input = document.getElementById("aiInput").value;
+  const outputBox = document.getElementById("aiOutput");
+
+  outputBox.innerHTML = "Thinking...";
+
+  const res = await fetch("/ai", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ prompt: input })
+  });
+
+  const data = await res.json();
+  outputBox.innerText = data.output;
+}
 checkStatus();
