@@ -1,22 +1,47 @@
-const API = "";
-
 function showSection(id) {
   document.querySelectorAll(".section").forEach(sec => {
     sec.classList.add("hidden");
   });
-  document.getElementById(id).classList.remove("hidden");
+
+  document.querySelectorAll(".nav-buttons button")
+    .forEach(btn => btn.classList.remove("active"));
+
+  const activeSection = document.getElementById(id);
+  activeSection.classList.remove("hidden");
+  activeSection.style.opacity = 0;
+
+  setTimeout(() => activeSection.style.opacity = 1, 10);
+
+  const activeButton = [...document.querySelectorAll(".nav-buttons button")]
+    .find(btn => btn.textContent.toLowerCase() === id);
+
+  if (activeButton) activeButton.classList.add("active");
+}
+
+function showToast(message) {
+  const toast = document.createElement("div");
+  toast.className = "toast";
+  toast.textContent = message;
+  document.body.appendChild(toast);
+
+  setTimeout(() => toast.remove(), 3000);
 }
 
 async function checkStatus() {
   try {
     const res = await fetch("/health");
+    const pill = document.getElementById("status");
+
     if (res.ok) {
-      document.getElementById("status").innerHTML =
-        "Backend Status: <span style='color:green'>Online</span>";
+      pill.textContent = "Backend Online";
+      pill.classList.remove("offline");
+    } else {
+      throw new Error();
     }
   } catch {
-    document.getElementById("status").innerHTML =
-      "Backend Status: <span style='color:red'>Offline</span>";
+    const pill = document.getElementById("status");
+    pill.textContent = "Backend Offline";
+    pill.classList.add("offline");
   }
 }
 
@@ -31,7 +56,7 @@ async function saveCredentials() {
     body: JSON.stringify({ portal, username, password })
   });
 
-  alert("Credentials Saved");
+  showToast("Credentials saved successfully");
 }
 
 async function uploadResume() {
@@ -44,7 +69,7 @@ async function uploadResume() {
     body: formData
   });
 
-  alert("Resume Uploaded");
+  showToast("Resume uploaded successfully");
 }
 
 async function runAutomation() {
@@ -54,8 +79,8 @@ async function runAutomation() {
     body: JSON.stringify({ portal: "linkedin", resumePath: "" })
   });
 
-  alert("Automation Started");
   startLogs();
+  showToast("Automation started");
 }
 
 function startLogs() {
@@ -68,3 +93,4 @@ function startLogs() {
 }
 
 checkStatus();
+showSection("credentials");
