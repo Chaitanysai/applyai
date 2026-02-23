@@ -92,19 +92,36 @@ async function runAutomation() {
   }
 }
 
-/* AI */
+/* GEMINI AI */
 async function askAI() {
   const input = document.getElementById("aiInput").value;
   const output = document.getElementById("aiOutput");
 
+  if (!input) {
+    output.innerText = "Enter a prompt first.";
+    return;
+  }
+
   output.innerText = "Thinking...";
 
-  const res = await fetch("/ai", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ prompt: input })
-  });
+  try {
+    const res = await fetch("/ai", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ prompt: input })
+    });
 
-  const data = await res.json();
-  output.innerText = data.output;
+    const data = await res.json();
+
+    if (data.output) {
+      output.innerText = data.output;
+    } else if (data.error) {
+      output.innerText = "Error: " + data.error;
+    } else {
+      output.innerText = "Unexpected response.";
+    }
+
+  } catch (err) {
+    output.innerText = "AI request failed.";
+  }
 }
