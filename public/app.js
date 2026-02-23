@@ -1,90 +1,103 @@
-// Floating blobs
-const blob1 = document.createElement("div");
-blob1.className = "blob one";
-document.body.appendChild(blob1);
+let totalApplications = 0;
+let uploadedResumePath = null;
 
-const blob2 = document.createElement("div");
-blob2.className = "blob two";
-document.body.appendChild(blob2);
-
-// Dark/Light Toggle
-const toggle = document.createElement("button");
-toggle.textContent = "🌗";
-toggle.style.position = "fixed";
-toggle.style.top = "20px";
-toggle.style.right = "20px";
-toggle.onclick = () => document.body.classList.toggle("light");
-document.body.appendChild(toggle);
-
-// Stats Dashboard
-const stats = document.createElement("div");
-stats.className = "stats-grid reveal";
-stats.innerHTML = `
-<div class="stat-card"><div>Total Applications</div><div class="stat-number" id="totalApps">0</div></div>
-<div class="stat-card"><div>Success Rate</div><div class="stat-number">76%</div></div>
-<div class="stat-card"><div>Active Portals</div><div class="stat-number">4</div></div>
-`;
-document.querySelector(".main-content").prepend(stats);
-
-// Real-time Counter
-let count = 0;
-function incrementCounter() {
-  count++;
-  document.getElementById("totalApps").textContent = count;
-}
-
-// Scroll Reveal
-const observer = new IntersectionObserver(entries => {
-  entries.forEach(entry => {
-    if (entry.isIntersecting) {
-      entry.target.classList.add("active");
-    }
-  });
-});
-document.querySelectorAll(".reveal").forEach(el => observer.observe(el));
-
-// AI Assistant Bubble
-const ai = document.createElement("div");
-ai.className = "ai-bubble";
-ai.innerHTML = "🤖";
-ai.onclick = () => showToast("AI Assistant coming soon 🚀");
-document.body.appendChild(ai);
-
-// Toast
-function showToast(message) {
-  const toast = document.createElement("div");
-  toast.className = "toast";
-  toast.textContent = message;
-  document.body.appendChild(toast);
-  setTimeout(() => toast.remove(), 3000);
-}
-
-// Section Switch
+/* SECTION SWITCH */
 function showSection(id) {
-  document.querySelectorAll(".section").forEach(sec => sec.classList.add("hidden"));
+  document.querySelectorAll(".section").forEach(sec => {
+    sec.classList.add("hidden");
+  });
+
+  document.querySelectorAll(".sidebar button").forEach(btn => {
+    btn.classList.remove("active");
+  });
+
   document.getElementById(id).classList.remove("hidden");
+
+  document.querySelector(
+    `.sidebar button[onclick="showSection('${id}')"]`
+  ).classList.add("active");
 }
 
-// Backend Status
+/* STATUS */
 async function checkStatus() {
   try {
     const res = await fetch("/health");
     if (!res.ok) throw new Error();
+    document.getElementById("status").innerText = "Backend Online";
   } catch {
-    document.querySelector(".dot").style.background = "red";
+    document.getElementById("status").innerText = "Backend Offline";
+  }
+}
+checkStatus();
+
+/* SAVE CREDENTIALS */
+async function saveCredentials() {
+  const portal = document.getElementById("portal").value;
+  const username = document.getElementById("username").value;
+  const password = document.getElementById("password").value;
+
+  await fetch("/api/save-credentials", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ portal, username, password })
+  });
+
+  alert("Credentials Saved");
+}
+
+/* UPLOAD RESUME */
+async function uploadResume() {
+  const fileInput = document.getElementById("resumeFile");
+  if (!fileInput.files.length) {
+    alert("Select a file first");
+    return;
+  }
+
+  const formData = new FormData();
+  formData.append("resume", fileInput.files[0]);
+
+  const res = await fetch("/api/upload-resume", {
+    method: "POST",
+    body: formData
+  });
+
+  const data = await res.json();
+  uploadedResumePath = data.path;
+
+  alert("Resume Uploaded");
+}
+
+/* RUN AUTOMATION */
+async function runAutomation() {
+  if (!uploadedResumePath) {
+    alert("Upload resume first");
+    return;
+  }
+
+  const portal = document.getElementById("portal").value;
+
+  const res = await fetch("/api/run", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      portal,
+      resumePath: uploadedResumePath
+    })
+  });
+
+  if (res.ok) {
+    totalApplications++;
+    document.getElementById("totalApps").innerText = totalApplications;
+    alert("Automation Started");
   }
 }
 
-async function runAutomation() {
-  incrementCounter();
-  showToast("Automation Started 🚀");
-}
-
+/* AI */
 async function askAI() {
   const input = document.getElementById("aiInput").value;
-  const outputBox = document.getElementById("aiOutput");
+  const output = document.getElementById("aiOutput");
 
-  outputBox.innerHTML = "Thinking...";
+  output.innerText = "Thinking...";
 
   const res = await fetch("/ai", {
     method: "POST",
@@ -93,6 +106,5 @@ async function askAI() {
   });
 
   const data = await res.json();
-  outputBox.innerText = data.output;
+  output.innerText = data.output;
 }
-checkStatus();
