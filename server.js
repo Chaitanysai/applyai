@@ -10,44 +10,61 @@ const { saveCredentials, getCredentials } = require("./credentialStore");
 const { runAutomation } = require("./engine");
 
 const app = express();
+
 app.use(cors());
 app.use(express.json());
 
-/* =======================
-   Gemini AI Setup
-======================= */
+/* ==============================
+   GEMINI AI SETUP
+============================== */
+
+if (!process.env.GEMINI_API_KEY) {
+  console.error("GEMINI_API_KEY is missing!");
+}
+
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
 app.post("/ai", async (req, res) => {
   try {
     const { prompt } = req.body;
 
+    if (!prompt) {
+      return res.status(400).json({ error: "Prompt is required" });
+    }
+
     const model = genAI.getGenerativeModel({
       model: "gemini-1.5-flash"
     });
 
     const result = await model.generateContent(prompt);
+
     const response = await result.response;
     const text = response.text();
 
-    res.json({ output: text });
+    return res.json({
+      output: text || "No response generated."
+    });
 
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: "AI request failed" });
+  } catch (error) {
+    console.error("Gemini Error:", error);
+    return res.status(500).json({
+      error: "Gemini request failed"
+    });
   }
 });
 
-/* =======================
-   File Upload Setup
-======================= */
+/* ==============================
+   FILE UPLOAD
+============================== */
+
 const upload = multer({
   dest: path.join(__dirname, "storage/resumes")
 });
 
-/* =======================
-   SSE Logging
-======================= */
+/* ==============================
+   SSE LOGS
+============================== */
+
 let clients = [];
 
 function sendLog(message) {
@@ -61,34 +78,39 @@ app.get("/api/logs", (req, res) => {
   clients.push(res);
 });
 
-/* =======================
-   Health Check
-======================= */
+/* ==============================
+   HEALTH
+============================== */
+
 app.get("/health", (req, res) => {
   res.json({ status: "ok" });
 });
 
-/* =======================
-   Credentials
-======================= */
+/* ==============================
+   CREDENTIALS
+============================== */
+
 app.post("/api/save-credentials", (req, res) => {
   const { portal, username, password } = req.body;
   saveCredentials(portal, username, password);
   res.json({ success: true });
 });
 
-/* =======================
-   Resume Upload
-======================= */
+/* ==============================
+   RESUME UPLOAD
+============================== */
+
 app.post("/api/upload-resume", upload.single("resume"), (req, res) => {
   res.json({ path: req.file.path });
 });
 
-/* =======================
-   Run Automation
-======================= */
+/* ==============================
+   RUN AUTOMATION
+============================== */
+
 app.post("/api/run", async (req, res) => {
   const { portal, resumePath } = req.body;
+
   const creds = getCredentials(portal);
 
   runAutomation(portal, creds, resumePath, sendLog);
@@ -96,18 +118,20 @@ app.post("/api/run", async (req, res) => {
   res.json({ started: true });
 });
 
-/* =======================
-   Serve Frontend
-======================= */
+/* ==============================
+   SERVE FRONTEND
+============================== */
+
 app.use(express.static(path.join(__dirname, "public")));
 
 app.get("*", (req, res) => {
   res.sendFile(path.join(__dirname, "public/index.html"));
 });
 
-/* =======================
-   Start Server
-======================= */
+/* ==============================
+   START SERVER
+============================== */
+
 const PORT = process.env.PORT || 10000;
 
 app.listen(PORT, () => {
