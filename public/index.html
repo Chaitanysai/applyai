@@ -1,63 +1,84 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>ApplyAI Dashboard</title>
 
+  <!-- Google Font -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style.css" />
 </head>
+
 <body>
 
-<div class="app-shell">
+  <div class="app-shell">
 
-  <aside class="sidebar glass-card">
-    <div class="brand">
-      <span class="brand-logo">✦</span>
-      <div>
-        <h1>ApplyAI</h1>
-        <p>Smart Job Automation</p>
-      </div>
-    </div>
+    <!-- Sidebar -->
+    <aside class="sidebar glass-card">
 
-    <nav class="nav-buttons">
-      <button onclick="showSection('credentials')">Credentials</button>
-      <button onclick="showSection('resume')">Resume</button>
-      <button onclick="showSection('run')">Run</button>
-      <button onclick="showSection('logs')">Logs</button>
-    </nav>
-
-    <div class="sidebar-tip">
-      <h3>Design Vision</h3>
-      <p>Rounded layouts, layered gradients and glass surfaces create a modern SaaS feel.</p>
-    </div>
-  </aside>
-
-  <main class="main-content">
-
-    <section class="hero glass-card">
-      <div>
-        <p class="eyebrow">Automation Workspace</p>
-        <h2>Beautiful workflows, built for speed.</h2>
-        <p class="hero-copy">
-          Manage credentials, upload resumes, and trigger job applications
-          in a premium interface designed for clarity and performance.
-        </p>
+      <div class="brand">
+        <div class="brand-logo">✦</div>
+        <div>
+          <h1>ApplyAI</h1>
+          <p>Smart Job Automation</p>
+        </div>
       </div>
 
-      <div id="status" class="status-pill">
-        Checking backend...
-      </div>
-    </section>
+      <nav class="nav-buttons">
+        <button onclick="showSection('credentials')" class="active">Credentials</button>
+        <button onclick="showSection('resume')">Resume</button>
+        <button onclick="showSection('run')">Run</button>
+        <button onclick="showSection('logs')">Logs</button>
+        <button onclick="showSection('ai')">AI Assistant</button>
+      </nav>
 
-    <section id="credentials" class="section glass-card">
-      <h3>Save Credentials</h3>
+    </aside>
 
-      <div class="form-grid">
+    <!-- Main Content -->
+    <main class="main-content">
+
+      <!-- Hero -->
+      <section class="hero glass-card reveal">
+        <div>
+          <p style="color:#8da2ff; font-weight:600;">Automation Workspace</p>
+          <h2>AI-Powered Job Application Engine</h2>
+          <p style="color: var(--muted);">
+            Manage credentials, automate applications, and generate intelligent responses with Gemini AI.
+          </p>
+        </div>
+
+        <div id="status" class="status-pill">
+          <span class="dot"></span>
+          Backend Online
+        </div>
+      </section>
+
+      <!-- Stats -->
+      <section class="glass-card reveal">
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div>Total Applications</div>
+            <div class="stat-number" id="totalApps">0</div>
+          </div>
+          <div class="stat-card">
+            <div>Success Rate</div>
+            <div class="stat-number">76%</div>
+          </div>
+          <div class="stat-card">
+            <div>Active Portals</div>
+            <div class="stat-number">4</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Credentials -->
+      <section id="credentials" class="section glass-card reveal">
+        <h3>Save Credentials</h3>
+
         <label>
           Portal
           <select id="portal">
@@ -70,47 +91,61 @@
 
         <label>
           Username
-          <input id="username" placeholder="name@email.com">
+          <input id="username" placeholder="name@email.com" />
         </label>
 
         <label>
           Password
-          <input id="password" type="password" placeholder="••••••••">
+          <input id="password" type="password" placeholder="••••••••" />
         </label>
-      </div>
 
-      <button class="primary-btn" onclick="saveCredentials()">
-        Save Credentials
-      </button>
-    </section>
+        <button class="primary-btn" onclick="saveCredentials()">Save Credentials</button>
+      </section>
 
-    <section id="resume" class="section glass-card hidden">
-      <h3>Upload Resume</h3>
-      <p>Attach your latest resume for automated submissions.</p>
+      <!-- Resume -->
+      <section id="resume" class="section glass-card hidden reveal">
+        <h3>Upload Resume</h3>
 
-      <div class="inline-actions">
-        <input type="file" id="resumeFile">
+        <input type="file" id="resumeFile" />
         <button class="primary-btn" onclick="uploadResume()">Upload</button>
-      </div>
-    </section>
+      </section>
 
-    <section id="run" class="section glass-card hidden">
-      <h3>Run Automation</h3>
-      <p>Start automation and monitor logs in real-time.</p>
+      <!-- Run Automation -->
+      <section id="run" class="section glass-card hidden reveal">
+        <h3>Run Automation</h3>
 
-      <button class="primary-btn" onclick="runAutomation()">
-        Start Automation
-      </button>
-    </section>
+        <button class="primary-btn" onclick="runAutomation()">
+          Start Automation
+        </button>
+      </section>
 
-    <section id="logs" class="section glass-card hidden">
-      <h3>Live Logs</h3>
-      <div id="logBox"></div>
-    </section>
+      <!-- Logs -->
+      <section id="logs" class="section glass-card hidden reveal">
+        <h3>Live Logs</h3>
+        <div id="logBox"></div>
+      </section>
 
-  </main>
-</div>
+      <!-- AI Assistant -->
+      <section id="ai" class="section glass-card hidden reveal">
+        <h3>Gemini AI Assistant</h3>
 
-<script src="app.js"></script>
+        <textarea
+          id="aiInput"
+          placeholder="Ask anything about resumes, job roles, cover letters..."
+          style="width:100%; min-height:120px; margin-bottom:12px; border-radius:12px; padding:10px;"
+        ></textarea>
+
+        <button class="primary-btn" onclick="askAI()">
+          Generate
+        </button>
+
+        <div id="aiOutput" style="margin-top:16px;"></div>
+      </section>
+
+    </main>
+  </div>
+
+  <script src="app.js"></script>
+
 </body>
 </html>
