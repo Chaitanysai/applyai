@@ -1,54 +1,116 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>ApplyAI Dashboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
+  <div class="app-shell">
+    <aside class="sidebar glass-card">
+      <div class="brand">
+        <span class="brand-logo">✦</span>
+        <div>
+          <h1>ApplyAI</h1>
+          <p>Smart Job Automation</p>
+        </div>
+      </div>
 
-<div class="container">
-  <div class="sidebar">
-    <h2>ApplyAI</h2>
-    <button onclick="showSection('credentials')">Credentials</button>
-    <button onclick="showSection('resume')">Resume</button>
-    <button onclick="showSection('run')">Run</button>
-    <button onclick="showSection('logs')">Logs</button>
+      <nav class="nav-buttons">
+        <button onclick="showSection('credentials')">Credentials</button>
+        <button onclick="showSection('resume')">Resume</button>
+        <button onclick="showSection('run')">Run</button>
+        <button onclick="showSection('logs')">Logs</button>
+      </nav>
+
+      <div class="sidebar-tip">
+        <h3>Design Direction</h3>
+        <p>Rounded panels, layered gradients, and spacious cards create a modern and approachable interface.</p>
+      </div>
+    </aside>
+
+    <main class="main-content">
+      <section class="hero glass-card">
+        <div>
+          <p class="eyebrow">Automation Workspace</p>
+          <h2>Beautiful workflows, built for speed.</h2>
+          <p class="hero-copy">Manage credentials, upload resumes, and trigger job applications in a delightful UI designed for clarity.</p>
+        </div>
+        <div id="status" class="status-pill">Checking backend...</div>
+      </section>
+
+      <section id="credentials" class="section glass-card">
+        <h3>Save Credentials</h3>
+        <div class="form-grid">
+          <label>
+            Portal
+            <select id="portal">
+              <option value="linkedin">LinkedIn</option>
+              <option value="naukri">Naukri</option>
+              <option value="indeed">Indeed</option>
+              <option value="instahyre">Instahyre</option>
+            </select>
+          </label>
+          <label>
+            Username
+            <input id="username" placeholder="name@email.com">
+          </label>
+          <label>
+            Password
+            <input id="password" type="password" placeholder="••••••••">
+          </label>
+        </div>
+        <button class="primary-btn" onclick="saveCredentials()">Save Credentials</button>
+      </section>
+
+      <section id="resume" class="section glass-card hidden">
+        <h3>Upload Resume</h3>
+        <p>Attach your latest profile to personalize each application run.</p>
+        <div class="inline-actions">
+          <input type="file" id="resumeFile">
+          <button class="primary-btn" onclick="uploadResume()">Upload</button>
+        </div>
+      </section>
+
+      <section id="run" class="section glass-card hidden">
+        <h3>Run Automation</h3>
+        <p>Start the flow and monitor logs in real-time as ApplyAI works in the background.</p>
+        <button class="primary-btn" onclick="runAutomation()">Start Automation</button>
+      </section>
+
+      <section id="logs" class="section glass-card hidden">
+        <h3>Live Logs</h3>
+        <div id="logBox"></div>
+      </section>
+
+      <section class="inspiration">
+        <h3>Modern app design inspirations</h3>
+        <p>Visual references that influenced this design's color, layout, and polished aesthetic:</p>
+        <div class="inspiration-grid">
+          <article class="inspiration-card">
+            <h4>Linear</h4>
+            <p><strong>Color:</strong> Deep neutrals with vibrant accent gradients for focus.</p>
+            <p><strong>Layout:</strong> Minimal side navigation, clear hierarchy, and generous spacing.</p>
+          </article>
+          <article class="inspiration-card">
+            <h4>Notion Calendar (Cron)</h4>
+            <p><strong>Color:</strong> Soft purple and blue tones that feel calm and premium.</p>
+            <p><strong>Layout:</strong> Card-based surfaces with rounded edges and subtle depth.</p>
+          </article>
+          <article class="inspiration-card">
+            <h4>Stripe Dashboard</h4>
+            <p><strong>Color:</strong> Layered gradients with high-contrast typography.</p>
+            <p><strong>Layout:</strong> Data-rich blocks kept readable through strong grouping and whitespace.</p>
+          </article>
+        </div>
+      </section>
+    </main>
   </div>
 
-  <div class="main">
-    <div id="status">Checking backend...</div>
-
-    <div id="credentials" class="section">
-      <h3>Save Credentials</h3>
-      <select id="portal">
-        <option value="linkedin">LinkedIn</option>
-        <option value="naukri">Naukri</option>
-        <option value="indeed">Indeed</option>
-        <option value="instahyre">Instahyre</option>
-      </select>
-      <input id="username" placeholder="Username">
-      <input id="password" type="password" placeholder="Password">
-      <button onclick="saveCredentials()">Save</button>
-    </div>
-
-    <div id="resume" class="section hidden">
-      <h3>Upload Resume</h3>
-      <input type="file" id="resumeFile">
-      <button onclick="uploadResume()">Upload</button>
-    </div>
-
-    <div id="run" class="section hidden">
-      <h3>Run Automation</h3>
-      <button onclick="runAutomation()">Start</button>
-    </div>
-
-    <div id="logs" class="section hidden">
-      <h3>Live Logs</h3>
-      <div id="logBox"></div>
-    </div>
-  </div>
-</div>
-
-<script src="app.js"></script>
+  <script src="app.js"></script>
 </body>
 </html>
